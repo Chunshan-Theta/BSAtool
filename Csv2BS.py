@@ -2,7 +2,6 @@
 #Csv file of Source Data convert to Behavior Sequential 
 '''
 using :
-
 Set var:
     CsvDir ='DataFormWuret.csv'     #Data from and name 
     listtitle = 'group_argu_code'   #Row name 
@@ -10,7 +9,6 @@ Set var:
     SelectedGroup = '21'            #Name of Selected Group
 Read file:
     SourceData = ReadFile(CsvDir)
-
 Compute Motion array:
     ComputeMotionIndex(SourceData,TypeNum,'21')
 '''
