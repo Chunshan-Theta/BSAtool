@@ -54,11 +54,11 @@ class BSA:
         TypeNum +=1 # Because Data not contain 0
         MotionSet=numpy.zeros((TypeNum,TypeNum),int)
         ####
-
+        
         for index in range(TypeNum-1):
             MotionSet[0][index+1]=index+1
             MotionSet[index+1][0]=index+1
-
+        
         for index in range(len(listmotion)-1):
                 FirstMotion = listmotion[index][1]
                 SecondMotion = listmotion[index+1][1]
@@ -79,14 +79,35 @@ class BSA:
                 print "warring: Input data:\'"+str(row[2])+'\' not Int'
         Tfile.close()
         return listmotion
+    def show(self,Title=1):
+        if Title:
+            print self.SelectedArray
+        else:
+            for i in range(1,self.TypeNum+1):
+                PrintStr =''
+                for p in range(1,self.TypeNum+1):
+                    PrintStr += str(self.SelectedArray[i,p])
+                    PrintStr += ','
+                print PrintStr
+
+    def ReNumOfMotionSet(self,Fir,Sec):
+        return self.SelectedArray[Fir,Sec]
 
 
 
+
+##using
 FirstBSA = BSA('DataFormWuret.csv',6)
-print FirstBSA.SelectedArray
+FirstBSA.show()
 
-FirstBSA.ComputeMotionGroup('21')
-print FirstBSA.SelectedArray
+FirstBSA.ComputeMotionGroup('4')
+FirstBSA.show()
 
+FirstBSA.ComputeMotionGroup('5')
+FirstBSA.show()
 
+FirstBSA.ComputeMotionALL()
+FirstBSA.show(Title = False)
+
+print FirstBSA.ReNumOfMotionSet(1,3)
 
