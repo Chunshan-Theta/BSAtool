@@ -79,10 +79,9 @@ class BSA:
                 print "warring: Input data:\'"+str(row[2])+'\' not Int'
         Tfile.close()
         return listmotion
-    def show(self,Title=1):
-        if Title:
-            print self.SelectedArray
-        else:
+
+    def show(self,Actiontype=0):
+        if Actiontype ==1: #without title
             for i in range(1,self.TypeNum+1):
                 PrintStr =''
                 for p in range(1,self.TypeNum+1):
@@ -90,14 +89,26 @@ class BSA:
                     PrintStr += ','
                 print PrintStr
 
+        elif Actiontype == 0:            
+            print self.SelectedArray
+
+        elif Actiontype == 2: # list of count
+            for i in range(1,self.TypeNum+1):
+                for p in range(1,self.TypeNum+1):
+                    PrintStr = str(i)+" "+str(p)+" "
+                    PrintStr += str(self.SelectedArray[i,p])
+                    print PrintStr
+        else:
+            print "Not found the action type"
+
     def ReNumOfMotionSet(self,Fir,Sec):
         return self.SelectedArray[Fir,Sec]
 
 
 
-
+'''
 ##using
-FirstBSA = BSA('DataFormWuret.csv',6)
+FirstBSA = BSA('DataFormWuret.csv',7)
 FirstBSA.show()
 
 FirstBSA.ComputeMotionGroup('4')
@@ -107,7 +118,8 @@ FirstBSA.ComputeMotionGroup('5')
 FirstBSA.show()
 
 FirstBSA.ComputeMotionALL()
-FirstBSA.show(Title = False)
+FirstBSA.show(2)
 
 print FirstBSA.ReNumOfMotionSet(1,3)
+'''
 
