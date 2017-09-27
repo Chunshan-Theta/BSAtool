@@ -15,8 +15,11 @@ import csv
 import numpy
 
 class BSA:
-    def __init__(self,CsvDir,TypeNum):
-        self.listmotion = self.ReadFile(CsvDir)
+    def __init__(self,CsvSource,TypeNum):
+        try:
+            self.listmotion = self.ReadFile(CsvSource)
+        except:
+            self.listmotion = self.ReadCSV(CsvSource.encode("utf-8"))
         self.SelectedArray = [[]]        
         self.TypeNum = TypeNum
         self.ComputeMotionALL()
@@ -37,11 +40,12 @@ class BSA:
             MotionSet[index+1][0]=index+1
 
         for index in range(len(listmotion)-1):
-            if listmotion[index][0] == listmotion[index+1][0] and wantSet == listmotion[index][0]:
+            if listmotion[index][0] == listmotion[index+1][0] and str(wantSet) == str(listmotion[index][0]):
                 # if not same group, pass
                 # if didn't select group, pass
                 FirstMotion = listmotion[index][1]
                 SecondMotion = listmotion[index+1][1]
+                
                 MotionSet[FirstMotion][SecondMotion] += 1
         #print MotionSet
         self.SelectedArray = MotionSet
@@ -80,8 +84,24 @@ class BSA:
         Tfile.close()
         return listmotion
 
+
+    def ReadCSV(self,CSV_TEXT):
+        listmotion = []
+        CSV_TEXT = CSV_TEXT.split('\n')
+        csvCursor = csv.reader(CSV_TEXT)
+        ####
+        for row in csvCursor:
+            
+            try:
+                if row[2] != '':
+                    listmotion.append([str(row[0]),int(row[2])])# Group , type
+            except:
+                print "warring: Input data:\'"+str(row[2])+'\' not Int'
+
+        return listmotion
+
     def show(self,Actiontype=0):
-        if Actiontype ==1: #without title
+        if Actiontype ==1: #print without title
             for i in range(1,self.TypeNum+1):
                 PrintStr =''
                 for p in range(1,self.TypeNum+1):
@@ -89,15 +109,17 @@ class BSA:
                     PrintStr += ','
                 print PrintStr
 
-        elif Actiontype == 0:            
+        elif Actiontype == 0: #print           
             print self.SelectedArray
 
-        elif Actiontype == 2: # list of count
+        elif Actiontype == 2: # return list of count
+            PrintStr = ""
             for i in range(1,self.TypeNum+1):
                 for p in range(1,self.TypeNum+1):
-                    PrintStr = str(i)+" "+str(p)+" "
+                    PrintStr += str(i)+" "+str(p)+" "
                     PrintStr += str(self.SelectedArray[i,p])
-                    print PrintStr
+                    PrintStr += "\n"
+            return PrintStr
         else:
             print "Not found the action type"
 
@@ -106,20 +128,21 @@ class BSA:
 
 
 
-'''
+
 ##using
-FirstBSA = BSA('DataFormWuret.csv',7)
-FirstBSA.show()
+FirstBSA = BSA('DataFormWuret.csv',6)
+#FirstBSA.show()
 
 FirstBSA.ComputeMotionGroup('4')
-FirstBSA.show()
-
+print(FirstBSA.show(2))
+'''
 FirstBSA.ComputeMotionGroup('5')
 FirstBSA.show()
 
 FirstBSA.ComputeMotionALL()
-FirstBSA.show(2)
+print FirstBSA.show(2)
 
 print FirstBSA.ReNumOfMotionSet(1,3)
+
 '''
 
