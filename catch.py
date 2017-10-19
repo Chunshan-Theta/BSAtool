@@ -126,7 +126,7 @@ def Combine_List(arr1,arr2):
 search_web = exeSQl("SELECT * FROM search_web")
 note = exeSQl("SELECT * FROM note")
 search = exeSQl("SELECT * FROM search")
-chat_record = exeSQl("SELECT * FROM chat_record") #the list didn't have `stu_id` column
+chat_record = exeSQl("SELECT * FROM chat_record")           
 
 
 #ShowDBList(note)                                           #show data of SQL list
@@ -209,7 +209,7 @@ for i in sorted(correct_list, reverse=True, cmp=compare):
 
 
 import csv
-f = open('exportExample.csv', 'a+')
+f = open('exportExample.csv', 'w')
 csvCursor = csv.writer(f)
 
 csvCursor.writerow(['type','user','content','time'])
