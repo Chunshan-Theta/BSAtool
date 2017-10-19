@@ -10,7 +10,7 @@ sys.setdefaultencoding('utf-8')     # 3
 import MySQLdb
 
 # 連接 MySQL 資料庫
-db = MySQLdb.connect(host="140.118.37.196",user="root", passwd="ytwu57874", db="ets_search",charset='utf8')
+db = MySQLdb.connect(host="xxx.xxxx.xxxx.xxxx",user="root", passwd="root_password", db="db_liat_name",charset='utf8')
 cursor = db.cursor()
 
 
