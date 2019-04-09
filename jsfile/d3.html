@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<canvas width="500" height="500"></canvas>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script>
+const colorSet=["rgba(0,0,0,0)","red","blue","seagreen","green","lightgrey"];
+const lightColorSet=["rgba(0,0,0,0)","pink","skyblue","lightseagreen","lightgreen","lightgrey"];
+var canvas = document.querySelector("canvas"),
+    context = canvas.getContext("2d"),
+    width = canvas.width,
+    height = canvas.height;
+context.font = "20px Arial ";
+
+
+var simulation = d3.forceSimulation()
+    .alphaDecay(0.03)
+    .force('charge', d3.forceManyBody().strength(-2000).distanceMax(500).distanceMin(100))
+    .force("link", d3.forceLink().id(function(d) { return d.id; }))
+    .force("center", d3.forceCenter(width / 2, height / 2));
+var graph={
+  "nodes": [
+    {"id": "提出新論點","label":"提出新論點", "group": 1},
+    {"id": "提出疑問","label":"提出疑問" ,"group": 2},
+    {"id": "同意論點","label":"同意論點" ,"group": 3},
+    {"id": "質疑論點","label":"質疑論點", "group": 4},
+    {"id": "其他","label":"其他", "group": 5},
+    {"id": "center","label":"", "group": 0},
+
+  ],
+  "links": [
+    {"source": "center", "target": "提出疑問", "value": 10},
+    {"source": "center", "target": "同意論點", "value": 10},
+    {"source": "center", "target": "提出新論點", "value": 10},
+    {"source": "center", "target": "質疑論點", "value": 10},
+    {"source": "center", "target": "其他", "value": 10},
+    {"source": "提出疑問", "target": "質疑論點", "value": 1.96},
+    {"source": "同意論點", "target": "提出新論點", "value": 2.56},
+    {"source": "質疑論點", "target": "提出新論點", "value": 2.56},
+    {"source": "提出新論點", "target": "其他", "value": 5.1}
+  ]
+}
+
+
+simulation
+    .nodes(graph.nodes)
+    .on("tick", ticked);
+
+simulation.force("link")
+    .links(graph.links);
+
+d3.select(canvas)
+    .call(d3.drag()
+        .container(canvas)
+        .subject(dragsubject)
+        .on("start", dragstarted)
+        .on("drag", dragged)
+        .on("end", dragended));
+
+function ticked() {
+  context.clearRect(0, 0, width, height);
+
+
+
+
+  graph.nodes.forEach(drawNode);
+  graph.links.forEach(drawLink);
+
+
+
+
+
+}
+
+function dragsubject() {
+  return simulation.find(d3.event.x, d3.event.y);
+}
+
+
+function dragstarted() {
+  if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+  d3.event.subject.fx = d3.event.subject.x;
+  d3.event.subject.fy = d3.event.subject.y;
+}
+
+function dragged() {
+  d3.event.subject.fx = d3.event.x;
+  d3.event.subject.fy = d3.event.y;
+}
+
+function dragended() {
+  if (!d3.event.active) simulation.alphaTarget(0);
+  d3.event.subject.fx = null;
+  d3.event.subject.fy = null;
+}
+function arrow(ctx, x1, y1, x2, y2, start, end) {
+  var rot = -Math.atan2(x1 - x2, y1 - y2);
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+  if (start) {
+    arrowHead(ctx,x1, y1, rot);
+  }
+  if (end) {
+    arrowHead(ctx,x2, y2, rot + Math.PI);
+  }
+}
+
+function arrowHead(ctx,x, y, rot) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(rot);
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(-5, -12);
+  ctx.lineTo(5, -12);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+function drawLink(d) {
+  var x_lineCenter = -(d.source.x- d.target.x)/3+d.source.x;
+  var y_lineCenter = -(d.source.y- d.target.y)/3+d.source.y-15;
+  context.beginPath();
+  context.moveTo(d.source.x, d.source.y);
+  context.lineTo(d.target.x, d.target.y);
+  context.strokeStyle= lightColorSet[(d.source.group)];
+  context.fillStyle = colorSet[(d.source.group)];
+  context.lineWidth = d.value;//Math.sqrt(d.value);
+  context.fillText(d.value, x_lineCenter, y_lineCenter);
+  context.stroke();
+  context.closePath();
+  arrow(context, d.source.x, d.source.y, d.target.x, d.target.y,false, true);
+}
+
+function drawNode(d) {
+  context.beginPath();
+
+  context.fillStyle= lightColorSet[(d.group)];
+  context.arc(d.x, d.y, 10, 0, 2 * Math.PI);
+
+  context.fill();
+
+
+
+  context.closePath();
+
+  context.beginPath();
+
+  context.fillStyle= colorSet[(d.group)];
+  context.fillText(d.label, d.x, d.y);
+  context.closePath();
+
+}
+
+</script>
