@@ -9,10 +9,8 @@ Your browser does not support the canvas element.
 
 <script>
 var canvas = document.getElementById("myCanvas");
-var ctx = canvas.getContext("2d");
-
-
-function drawSquare(a,label,r=40){
+ctx = canvas.getContext("2d");
+function drawSquare(a,label,r=60){
     var x = a[0];
     var y = a[1];
     ctx.font = "12px Arial";
@@ -23,14 +21,12 @@ function drawSquare(a,label,r=40){
     ctx.lineTo(x+r,y+r);
     ctx.lineTo(x,y+r);
     ctx.lineTo(x,y);
-
 }
-
-function drawLineSquare(a1,a2,label,r=40){
+function drawLineSquare(a1,a2,label,r=60){
     var a1_point=[[a1[0],a1[1]],[a1[0],a1[1]+r],[a1[0]+r,a1[1]],[a1[0]+r,a1[1]+r],[a1[0]+r,a1[1]+r/2],[a1[0]+r/2,a1[1]+r],[a1[0],a1[1]+r/2],[a1[0]+r/2,a1[1]]];
     var a2_point=[[a2[0],a2[1]],[a2[0],a2[1]+r],[a2[0]+r,a2[1]],[a2[0]+r,a2[1]+r],[a2[0]+r,a2[1]+r/2],[a2[0]+r/2,a2[1]+r],[a2[0],a2[1]+r/2],[a2[0]+r/2,a2[1]]];
     var len = 9999;
-    var x_distance = 0;
+    var x_distance =0;
     var y_distance = 0;
     for(var idx1 in a1_point){
       for(var idx2 in a2_point){
@@ -51,31 +47,37 @@ function drawLineSquare(a1,a2,label,r=40){
     ctx.textAlign = "center";
     ctx.fillText(label,a1[0]+x_distance/4,a1[1]+y_distance/4);
     ctx.moveTo(a1[0],a1[1]);
-
     ctx.lineTo(a2[0],a2[1]);
-    ctx.lineTo(a1[0]+x_distance/2,a1[1]+y_distance*0.85);
     ctx.fillText("●",a1[0],a1[1]+4);
+    var rot = -Math.atan2(a1[0] - a2[0], a1[1] - a2[1]);
+    arrowHead(a2[0],a2[1], rot + Math.PI);
+    //arrow(a1[0], a1[1], a2[0], a2[1], false, true);
     //ctx.fillText("V",a2[0],a2[1]);
 }
 
-pointSet = [[20,50],[120,20],[220,50],[20,150],[120,180],[220,150]]
-drawSquare(pointSet[0],"1")
-drawSquare(pointSet[1],"2")
-drawSquare(pointSet[2],"3")
-drawSquare(pointSet[3],"4")
-drawSquare(pointSet[4],"5")
-drawSquare(pointSet[5],"6")
 
-drawLineSquare(pointSet[0],pointSet[4],"1.9")
-drawLineSquare(pointSet[2],pointSet[4],"1.8")
-drawLineSquare(pointSet[4],pointSet[3],"1.7")
-drawLineSquare(pointSet[0],pointSet[1],"1.6")
-drawLineSquare(pointSet[1],pointSet[2],"1.9")
-drawLineSquare(pointSet[2],pointSet[3],"1.8")
-drawLineSquare(pointSet[3],pointSet[4],"1.7")
-drawLineSquare(pointSet[4],pointSet[5],"1.6")
-drawLineSquare(pointSet[5],pointSet[0],"1.6")
-drawLineSquare(pointSet[1],pointSet[4],"1.9")
+function arrowHead(x, y, rot) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(rot);
+  //ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(-5, -12);
+  ctx.lineTo(5, -12);
+  ctx.closePath();
+  //ctx.fill();
+  ctx.restore();
+}
+pointSet = [[20,50],[130,20],[220,95],[20,150],[130,180]]
+drawSquare(pointSet[0],"提出新論點");
+drawSquare(pointSet[1],"提出疑問");
+drawSquare(pointSet[2],"同意論點");
+drawSquare(pointSet[3],"質疑論點");
+drawSquare(pointSet[4],"其他");
+drawLineSquare(pointSet[1],pointSet[3],"1.96");
+drawLineSquare(pointSet[2],pointSet[0],"2.56");
+drawLineSquare(pointSet[3],pointSet[0],"2.56");
+drawLineSquare(pointSet[0],pointSet[4],"5.1")
 ctx.stroke();
 </script>
 
