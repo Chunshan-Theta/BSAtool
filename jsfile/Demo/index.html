@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<canvas id="myCanvas" width="360" height="360"
+style="border:1px solid #d3d3d3;">
+Your browser does not support the canvas element.
+</canvas>
+
+
+
+
+<script src="data.js" ></script>
+<script>
+// commond function
+function ndarray(length) {
+    var arr = new Array(length || 0),
+        i = length;
+    for(var idx= 0 ; idx<length;idx +=1){
+        arr[idx]=0;//init value is zero
+    }
+    if (arguments.length > 1) {
+        var args = [].slice.call(arguments, 1);
+        while(i--) arr[length-1 - i] = ndarray.apply(this, args);
+    }
+
+    return arr;
+}
+function sum(arr){
+    return arr.reduce((a,b)=>a+b);  
+}
+</script>
+<script>
+var canvas = document.getElementById("myCanvas");
+ctx = canvas.getContext("2d");
+function drawSquare(a,label,r=60){
+    var x = a[0];
+    var y = a[1];
+    ctx.font = "12px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText(label,x+(r/2),y+(r/1.8));
+    ctx.moveTo(x,y);
+    ctx.lineTo(x+r,y);
+    ctx.lineTo(x+r,y+r);
+    ctx.lineTo(x,y+r);
+    ctx.lineTo(x,y);
+}
+
+function drawGoback(a1,label,r=60){
+  ctx.beginPath();
+  ctx.arc(a1[0],a1[1],r/4,0.5*Math.PI,2*Math.PI);
+  ctx.fillText(label,a1[0]-r/2.5,a1[1]);
+  arrowHead(a1[0]+r/4,a1[1],1.92*Math.PI);
+}
+
+function drawLineSquare(a1,a2,label,r=60){
+    if(a1[0]==a2[0]&&a1[1]==a2[1]){
+      drawGoback(a1,label);
+    }
+    else{
+      var a1_point=[[a1[0],a1[1]],[a1[0],a1[1]+r],[a1[0]+r,a1[1]],[a1[0]+r,a1[1]+r],[a1[0]+r,a1[1]+r/2],[a1[0]+r/2,a1[1]+r],[a1[0],a1[1]+r/2],[a1[0]+r/2,a1[1]]];
+      var a2_point=[[a2[0],a2[1]],[a2[0],a2[1]+r],[a2[0]+r,a2[1]],[a2[0]+r,a2[1]+r],[a2[0]+r,a2[1]+r/2],[a2[0]+r/2,a2[1]+r],[a2[0],a2[1]+r/2],[a2[0]+r/2,a2[1]]];
+      var len = 9999;
+      var x_distance =0;
+      var y_distance = 0;
+      for(var idx1 in a1_point){
+        for(var idx2 in a2_point){
+          var x1 = a1_point[idx1] ;
+          var x2 = a2_point[idx2] ;
+          
+          var tempLen = Math.sqrt((x1[0]-x2[0])**2+(x1[1]-x2[1])**2)
+          //console.log(tempLen);
+          if(tempLen<=len){
+            len = tempLen;
+            a1 = x1;
+            a2 = x2;
+            x_distance = -(x1[0]-x2[0])//Math.sqrt((x1[0]-x2[0])**2);
+            y_distance = -(x1[1]-x2[1])//Math.sqrt((x1[1]-x2[1])**2);
+          }
+        }
+      }
+      
+      ctx.font = "12px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText(label,a1[0]+x_distance/6,a1[1]+y_distance/6);
+      ctx.moveTo(a1[0],a1[1]);
+      ctx.lineTo(a2[0],a2[1]);
+      ctx.fillText("●",a1[0],a1[1]+4);
+      var rot = -Math.atan2(a1[0] - a2[0], a1[1] - a2[1]);
+      arrowHead(a2[0],a2[1], rot + Math.PI);
+    }
+    ctx.stroke();
+}
+function arrowHead(x, y, rot) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(rot);
+  //ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(-5, -12);
+  ctx.lineTo(5, -12);
+  ctx.closePath();
+  //ctx.fill();
+  ctx.restore();
+}
+pointSet = [[50,100],[150,20],[250,100],[80,220],[220,220]]
+const studentTypes = ["提出","疑問","推理","挑戰","其他"];
+drawSquare(pointSet[0],"提出");
+drawSquare(pointSet[1],"疑問");
+drawSquare(pointSet[2],"推理");
+drawSquare(pointSet[3],"挑戰");
+drawSquare(pointSet[4],"其他");
+
+/*
+drawLineSquare(pointSet[1],pointSet[3],"1.96");
+drawLineSquare(pointSet[2],pointSet[0],"2.56");
+drawLineSquare(pointSet[3],pointSet[0],"2.56");
+drawLineSquare(pointSet[0],pointSet[4],"5.1");
+drawLineSquare(pointSet[3],pointSet[3],"5.1");
+drawLineSquare(pointSet[4],pointSet[4],"5.1");
+*/
+
+function BSA(DATA){
+  var re=new Object();
+  logSets = [] ; // reset log to action windows form.
+  var lastLog = -1;
+  for(var ridx in DATA){
+    var studentTypeSelected = -1;
+    var n = -1;
+    var row = DATA[ridx]['content'];
+    for(var tIdx in studentTypes){
+      var studentType = studentTypes[tIdx];
+      nTemp = row.lastIndexOf("【"+studentType+"】");
+      if(nTemp >n){
+        n = nTemp;
+        studentTypeSelected = tIdx;
+      }
+    }
+    if(lastLog!=-1){
+      logSets.push([lastLog,studentTypeSelected])
+    }
+    lastLog =parseInt(studentTypeSelected);
+    //console.log(row);
+    //console.log(n,studentTypeSelected);
+    
+  }
+  //console.log(logSets);
+  re.logSets = logSets
+  var  actionArray  = ndarray(5,5);
+  for(var rIdx in logSets){
+    row = logSets[rIdx];
+    actionArray[row[0]][row[1]]+=1;
+    
+  }
+  //console.log(actionArray);
+  re.actionArray = actionArray
+
+
+  var XPlusPlus = 0
+  for(var rIdx in actionArray){
+    XPlusPlus += sum(actionArray[rIdx]);
+  }
+  var cols = [];
+  
+    
+  for(var cIdx in actionArray[0]){
+    var valueTemp = 0
+    for(var rIdx in actionArray){
+      valueTemp+= actionArray[rIdx][cIdx];
+    }
+    cols.push(valueTemp)
+  }
+  var  actionZscore  = ndarray(5,5);
+  //console.log(actionZscore); 
+  for(var rIdx in actionArray){
+    row = actionArray[rIdx]
+    for(var cIdx in row){
+      var XIJ = row[cIdx];
+      var XIPlus = sum(row);
+      var XPlusJ = cols[cIdx];
+      var MIJ = XIPlus*XPlusJ/XPlusPlus;
+      var PIPlus = XIPlus/XPlusPlus;
+      var PPlusJ = XPlusJ/XPlusPlus;
+      var valueTemp =(XIJ-MIJ)/Math.sqrt(MIJ*(1-PIPlus)*(1-PPlusJ)); 
+      if (!isNaN(valueTemp)) {
+        actionZscore[rIdx][cIdx] = parseFloat(valueTemp.toFixed(2));
+      }
+      //console.log(valueTemp);
+   }
+  }
+   
+  re.actionZscore = actionZscore
+
+
+
+  return re
+}
+result = BSA(actionLog);
+console.log(result.actionArray);
+console.log(result.actionZscore);
+var actionZscore = result.actionZscore;
+for(var rIdx in actionZscore){
+  for(var cIdx in actionZscore[rIdx]){
+    var valueTemp  = actionZscore[rIdx][cIdx];
+    if(valueTemp>1.96){
+      drawLineSquare(pointSet[rIdx],pointSet[cIdx],valueTemp);
+    }
+  }
+}
+</script>
+
+</body>
+</html>
