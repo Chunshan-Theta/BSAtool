@@ -44,6 +44,7 @@ function drawSquare(a,label,r=60){
     ctx.lineTo(x+r,y+r);
     ctx.lineTo(x,y+r);
     ctx.lineTo(x,y);
+    ctx.stroke();
 }
 
 function drawGoback(a1,label,r=60){
@@ -103,6 +104,7 @@ function arrowHead(x, y, rot) {
   //ctx.fill();
   ctx.restore();
 }
+/*
 pointSet = [[50,100],[150,20],[250,100],[80,220],[220,220]]
 const studentTypes = ["提出","疑問","推理","挑戰","其他"];
 drawSquare(pointSet[0],"提出");
@@ -111,7 +113,7 @@ drawSquare(pointSet[2],"推理");
 drawSquare(pointSet[3],"挑戰");
 drawSquare(pointSet[4],"其他");
 
-/*
+
 drawLineSquare(pointSet[1],pointSet[3],"1.96");
 drawLineSquare(pointSet[2],pointSet[0],"2.56");
 drawLineSquare(pointSet[3],pointSet[0],"2.56");
@@ -195,10 +197,24 @@ function BSA(DATA){
 
   return re
 }
+
+//setting basic args.
+pointSet = [[50,100],[150,20],[250,100],[80,220],[220,220]]
+const studentTypes = ["提出","疑問","推理","挑戰","其他"];
+drawSquare(pointSet[0],studentTypes[0]);
+drawSquare(pointSet[1],studentTypes[1]);
+drawSquare(pointSet[2],studentTypes[2]);
+drawSquare(pointSet[3],studentTypes[3]);
+drawSquare(pointSet[4],studentTypes[4]);
+
+
+// calculate Zcore valus
 result = BSA(actionLog);
 console.log(result.actionArray);
 console.log(result.actionZscore);
 var actionZscore = result.actionZscore;
+
+//draw result
 for(var rIdx in actionZscore){
   for(var cIdx in actionZscore[rIdx]){
     var valueTemp  = actionZscore[rIdx][cIdx];
