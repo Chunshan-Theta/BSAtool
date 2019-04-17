@@ -13,6 +13,8 @@ Your browser does not support the canvas element.
 <script src="data.js" ></script>
 <script>
 // commond function
+
+// create nD zero-array
 function ndarray(length) {
     var arr = new Array(length || 0),
         i = length;
@@ -26,13 +28,20 @@ function ndarray(length) {
 
     return arr;
 }
+
+// sum value of array
 function sum(arr){
     return arr.reduce((a,b)=>a+b);  
 }
 </script>
 <script>
+
+//initial canvas
 var canvas = document.getElementById("myCanvas");
 ctx = canvas.getContext("2d");
+
+
+//draw Square (using to build some based block)
 function drawSquare(a,label,r=60){
     var x = a[0];
     var y = a[1];
@@ -47,6 +56,7 @@ function drawSquare(a,label,r=60){
     ctx.stroke();
 }
 
+//draw line (for Zcore array pic)
 function drawGoback(a1,label,r=60){
   ctx.beginPath();
   ctx.arc(a1[0],a1[1],r/4,0.5*Math.PI,2*Math.PI);
@@ -54,6 +64,7 @@ function drawGoback(a1,label,r=60){
   arrowHead(a1[0]+r/4,a1[1],1.92*Math.PI);
 }
 
+//draw line (for Zcore array pic)
 function drawLineSquare(a1,a2,label,r=60){
     if(a1[0]==a2[0]&&a1[1]==a2[1]){
       drawGoback(a1,label);
@@ -92,6 +103,8 @@ function drawLineSquare(a1,a2,label,r=60){
     }
     ctx.stroke();
 }
+
+//draw a head of arrow for line 
 function arrowHead(x, y, rot) {
   ctx.save();
   ctx.translate(x, y);
@@ -104,27 +117,16 @@ function arrowHead(x, y, rot) {
   //ctx.fill();
   ctx.restore();
 }
-/*
-pointSet = [[50,100],[150,20],[250,100],[80,220],[220,220]]
-const studentTypes = ["提出","疑問","推理","挑戰","其他"];
-drawSquare(pointSet[0],"提出");
-drawSquare(pointSet[1],"疑問");
-drawSquare(pointSet[2],"推理");
-drawSquare(pointSet[3],"挑戰");
-drawSquare(pointSet[4],"其他");
 
-
-drawLineSquare(pointSet[1],pointSet[3],"1.96");
-drawLineSquare(pointSet[2],pointSet[0],"2.56");
-drawLineSquare(pointSet[3],pointSet[0],"2.56");
-drawLineSquare(pointSet[0],pointSet[4],"5.1");
-drawLineSquare(pointSet[3],pointSet[3],"5.1");
-drawLineSquare(pointSet[4],pointSet[4],"5.1");
-*/
-
+//calculation for BSA
 function BSA(DATA){
+  //inital var
   var re=new Object();
-  logSets = [] ; // reset log to action windows form.
+  var logSets = [] ; // reset log type to fit the action windows form.
+  var actionArray  = ndarray(5,5);//count of action windows.
+  var actionZscore  = ndarray(5,5); //value of Zscore which calculate from actionArray 
+
+  
   var lastLog = -1;
   for(var ridx in DATA){
     var studentTypeSelected = -1;
@@ -148,7 +150,7 @@ function BSA(DATA){
   }
   //console.log(logSets);
   re.logSets = logSets
-  var  actionArray  = ndarray(5,5);
+  
   for(var rIdx in logSets){
     row = logSets[rIdx];
     actionArray[row[0]][row[1]]+=1;
@@ -172,7 +174,7 @@ function BSA(DATA){
     }
     cols.push(valueTemp)
   }
-  var  actionZscore  = ndarray(5,5);
+  
   //console.log(actionZscore); 
   for(var rIdx in actionArray){
     row = actionArray[rIdx]
@@ -210,8 +212,6 @@ drawSquare(pointSet[4],studentTypes[4]);
 
 // calculate Zcore valus
 result = BSA(actionLog);
-console.log(result.actionArray);
-console.log(result.actionZscore);
 var actionZscore = result.actionZscore;
 
 //draw result
